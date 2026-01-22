@@ -26,8 +26,15 @@ public class PautaService {
         return pautaRepository.save(pauta);
     }
 
-    public List<Pauta> getAllPautas() {
-        return pautaRepository.findAll();
+    public List<PautaResponse> getAllPautas() {
+        return pautaRepository.findAll()
+                .stream()
+                .map(pauta -> new PautaResponse(
+                        pauta.getId(),
+                        pauta.getTitulo(),
+                        pauta.getDescricao(),
+                        pauta.getDataCriacao()
+                ))
+                .toList();
     }
-
 }

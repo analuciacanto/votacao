@@ -24,11 +24,13 @@ public class PautaController {
 
         Pauta pautaCriada = pautaService.criar(pautaRequest);
 
-        PautaResponse pautaResponse = new PautaResponse(pautaCriada.getId(), pautaCriada.getTitulo(), pautaCriada.getDescricao());
+        PautaResponse pautaResponse = new PautaResponse(pautaCriada.getId(), pautaCriada.getTitulo(), pautaCriada.getDescricao(),
+                pautaCriada.getDataCriacao());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(pautaResponse);    }
 
     @GetMapping
-    public ResponseEntity<List<Pauta>> listar() {
+    public ResponseEntity<List<PautaResponse>> listar() {
         return ResponseEntity.ok(pautaService.getAllPautas());
     }
 }

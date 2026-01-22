@@ -2,6 +2,7 @@ package br.com.softdesign.votacao.unit;
 
 import br.com.softdesign.votacao.domain.Pauta;
 import br.com.softdesign.votacao.dto.CriarPautaRequest;
+import br.com.softdesign.votacao.dto.PautaResponse;
 import br.com.softdesign.votacao.exception.PautaInvalidaException;
 import br.com.softdesign.votacao.repository.PautaRepository;
 import br.com.softdesign.votacao.service.PautaService;
@@ -12,7 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +51,7 @@ public class PautaServiceUnitTest {
         assertThat(pautaSalva.getDescricao()).isEqualTo("descricao");
         assertThat(resultado).isNotNull();
     }
+
     @Test
     void criarPauta_requestNulo_deveLancarExcecao() {
 
@@ -59,5 +63,24 @@ public class PautaServiceUnitTest {
                 .isEqualTo("Os dados não podem ser nulos");
 
         verifyNoInteractions(pautaRepository);
+    }
+
+    @Test
+    void getAllPautas_deveRetornarLista() {
+
+        Pauta pauta = new Pauta("Pauta", "Desc");
+        pauta.setId(1L);
+        when(pautaRepository.findAll()).thenReturn(List.of(pauta));
+
+        List<PautaResponse> pautasResponse = pautaService.getAllPautas();
+
+        assertThat(pautasResponse).hasSize(1);
+
+        PautaResponse primeira = pautasResponse.get(0);
+        assertThat(primeira.getId()).isEqualTo(1L);
+        assertThat(primeira.getTitulo()).isEqualTo("Pauta");
+        assertThat(primeira.getDescricao()).isEqualTo("Desc");
+
+        verify(pautaRepository).findAll();
     }
 }

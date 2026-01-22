@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -121,4 +123,37 @@ public class PautaControllerIntegrationTest {
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.descricao").doesNotExist());
     }
+
+    @Test
+    void listarPautas_quandoExistirPauta_deveRetornar200() throws Exception {
+
+        String pauta = """
+        {
+          "titulo": "Pauta de Teste",
+          "descricao": "Descrição"
+        }
+        """;
+
+        mockMvc.perform(post("/pautas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pauta))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/pautas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").exists())
+                .andExpect(jsonPath("$[0].titulo").value("Pauta de Teste"))
+                .andExpect(jsonPath("$[0].descricao").value("Descrição"));
+    }
+
+    @Test
+    void listarPautas_quandoNaoExistirPauta_deveRetornarListaVazia() throws Exception {
+
+        mockMvc.perform(get("/pautas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
 }
