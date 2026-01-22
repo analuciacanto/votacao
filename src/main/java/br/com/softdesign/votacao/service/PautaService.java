@@ -1,6 +1,8 @@
 package br.com.softdesign.votacao.service;
 
 import br.com.softdesign.votacao.domain.Pauta;
+import br.com.softdesign.votacao.dto.CriarPautaRequest;
+import br.com.softdesign.votacao.dto.PautaResponse;
 import br.com.softdesign.votacao.exception.PautaInvalidaException;
 import br.com.softdesign.votacao.repository.PautaRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,19 +16,18 @@ public class PautaService {
 
    private final PautaRepository pautaRepository;
 
-    public Pauta criar(Pauta pauta) {
-       if (pauta == null){
-           throw new PautaInvalidaException("Pauta não pode ser nula");
-       }
+    public Pauta criar(CriarPautaRequest pautaRequest) {
 
-       if (pauta.getTitulo() == null || pauta.getTitulo().isBlank()){
-           throw new PautaInvalidaException("O título da pauta é obrigatório");
-       }
+        if (pautaRequest == null) {
+            throw new PautaInvalidaException("Os dados não podem ser nulos");
+        }
 
-       return pautaRepository.save(pauta);
+        Pauta pauta = new Pauta(pautaRequest.getTitulo(), pautaRequest.getDescricao());
+        return pautaRepository.save(pauta);
     }
 
     public List<Pauta> getAllPautas() {
         return pautaRepository.findAll();
     }
+
 }

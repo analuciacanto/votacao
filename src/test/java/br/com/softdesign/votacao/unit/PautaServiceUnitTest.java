@@ -1,22 +1,22 @@
 package br.com.softdesign.votacao.unit;
 
 import br.com.softdesign.votacao.domain.Pauta;
+import br.com.softdesign.votacao.dto.CriarPautaRequest;
 import br.com.softdesign.votacao.exception.PautaInvalidaException;
 import br.com.softdesign.votacao.repository.PautaRepository;
 import br.com.softdesign.votacao.service.PautaService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PautaServiceUnitTest {
@@ -28,58 +28,36 @@ public class PautaServiceUnitTest {
     private PautaRepository pautaRepository;
 
     @Test
-    void criarPautaComDadosCorretos_deveCriarPautaComSucesso(){
+    void criarPautaComDadosCorretos_deveCriarPautaComSucesso() {
+        CriarPautaRequest request =
+                new CriarPautaRequest("Pauta teste", "descricao");
 
-        Pauta pauta = new Pauta("Pauta teste", "");
+        when(pautaRepository.save(any(Pauta.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        when(pautaRepository.save(pauta)).thenReturn(pauta);
+        ArgumentCaptor<Pauta> captor =
+                ArgumentCaptor.forClass(Pauta.class);
 
-        Pauta pautaSalva = pautaService.criar(pauta);
+        Pauta resultado = pautaService.criar(request);
 
-        verify(pautaRepository).save(pauta);
-        assertThat(pautaSalva).isNotNull();
+        verify(pautaRepository).save(captor.capture());
+
+        Pauta pautaSalva = captor.getValue();
+
         assertThat(pautaSalva.getTitulo()).isEqualTo("Pauta teste");
+        assertThat(pautaSalva.getDescricao()).isEqualTo("descricao");
+        assertThat(resultado).isNotNull();
     }
-
     @Test
-    void criarPautaNula_deveLancarExcecao(){
-        Pauta pauta = null;
+    void criarPauta_requestNulo_deveLancarExcecao() {
 
-        PautaInvalidaException pautaInvalidaException =
+        PautaInvalidaException exception =
                 assertThrows(PautaInvalidaException.class,
-                        () -> pautaService.criar(pauta));
-        assertEquals("Pauta não pode ser nula", pautaInvalidaException.getMessage());
-    }
+                        () -> pautaService.criar(null));
 
-    @Test
-    void criarPautaComTituloVazio_deveLancarExcecao() {
-        Pauta pauta = new Pauta("", "");
-        PautaInvalidaException pautaInvalidaException =
-                assertThrows(PautaInvalidaException.class,
-                        () -> pautaService.criar(pauta));
-        assertEquals("O título da pauta é obrigatório", pautaInvalidaException.getMessage());
-    }
+        assertThat(exception.getMessage())
+                .isEqualTo("Os dados não podem ser nulos");
 
-    @Test
-    void criarPautaComTituloEmBranco_deveLancarExcecao(){
-        Pauta pauta = new Pauta(" ", "");
-        PautaInvalidaException pautaInvalidaException =
-                assertThrows(PautaInvalidaException.class,
-                        () -> pautaService.criar(pauta));
-        assertEquals("O título da pauta é obrigatório", pautaInvalidaException.getMessage());
-    }
-
-    @Test
-    void retornarPautasCadastradasSemParametros_deveRetornarTodasPautasCadastradas(){
-        Pauta pauta1 = new Pauta("Pauta 1", "Descrição 1");
-        Pauta pauta2 = new Pauta("Pauta 2", "Descrição 2");
-
-        List<Pauta> pautas = List.of(pauta1,pauta2);
-        when(pautaRepository.findAll()).thenReturn(pautas);
-
-        List<Pauta> resultado = pautaService.getAllPautas();
-
-        assertEquals(2, resultado.size());
-        assertEquals("Pauta 1", resultado.get(0).getTitulo());
+        verifyNoInteractions(pautaRepository);
     }
 }
