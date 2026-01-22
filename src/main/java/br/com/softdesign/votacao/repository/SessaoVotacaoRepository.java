@@ -10,4 +10,6 @@ import java.util.Collection;
 @Repository
 public interface SessaoVotacaoRepository extends JpaRepository<SessaoVotacao, Long> {
     Collection<Object> findByPautaIdAndDataFimAfter(Long id, LocalDateTime now);
+
+    boolean existsByPautaIdAndDataFimAfter(Long id, LocalDateTime now);
 }

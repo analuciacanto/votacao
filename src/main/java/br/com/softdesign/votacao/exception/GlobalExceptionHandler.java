@@ -1,5 +1,6 @@
 package br.com.softdesign.votacao.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,5 +29,13 @@ public class GlobalExceptionHandler {
         response.put("mensagens", mensagens);
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(SessaoVotacaoInvaalidaException.class)
+    public ResponseEntity<Map<String, Object>> handleSessaoVotacaoInvalida(SessaoVotacaoInvaalidaException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", 400);
+        response.put("mensagem", ex.getMessage()); // singular
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

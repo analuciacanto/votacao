@@ -2,6 +2,7 @@ package br.com.softdesign.votacao.unit;
 
 import br.com.softdesign.votacao.domain.Pauta;
 import br.com.softdesign.votacao.domain.SessaoVotacao;
+import br.com.softdesign.votacao.dto.CriarSessaoVotacaoRequest;
 import br.com.softdesign.votacao.exception.SessaoVotacaoInvaalidaException;
 import br.com.softdesign.votacao.repository.PautaRepository;
 import br.com.softdesign.votacao.repository.SessaoVotacaoRepository;
@@ -13,18 +14,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SessaoVotacaoUnitTest {
+class SessaoVotacaoServiceUnitTest {
 
     @InjectMocks
     private SessaoVotacaoService sessaoVotacaoService;
@@ -39,61 +40,62 @@ class SessaoVotacaoUnitTest {
     void abrirSessao_comDuracaoInformada_ePautaValida_deveCriarSessaoAbertaComDuracaoInformada() {
         Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
         pauta.setId(1L);
-        SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, 30);
 
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
-        when(sessaoVotacaoRepository.save(sessaoVotacao)).thenReturn(sessaoVotacao);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
+        request.setPautaId(1L);
+        request.setDuracao(30);
 
-        SessaoVotacao sessaoVotacaoSalva = sessaoVotacaoService.criar(sessaoVotacao);
+        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
+        when(sessaoVotacaoRepository.existsByPautaIdAndDataFimAfter(eq(1L), any(LocalDateTime.class)))
+                .thenReturn(false);
+        when(sessaoVotacaoRepository.save(any(SessaoVotacao.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        verify(sessaoVotacaoRepository).save(sessaoVotacao);
-        assertThat(sessaoVotacaoSalva).isNotNull();
-        assertThat(sessaoVotacaoSalva.getPauta().getTitulo()).isEqualTo("Pauta 1");
-        assertThat(sessaoVotacaoSalva.isSessaoAberta()).isTrue();
-        assertThat(sessaoVotacaoSalva.getDuracao()).isEqualTo(30);
+        SessaoVotacao sessaoSalva = sessaoVotacaoService.criar(request);
+
+        verify(sessaoVotacaoRepository).save(any(SessaoVotacao.class));
+        assertThat(sessaoSalva).isNotNull();
+        assertThat(sessaoSalva.getPauta().getTitulo()).isEqualTo("Pauta 1");
+        assertThat(sessaoSalva.isSessaoAberta()).isTrue();
+        assertThat(sessaoSalva.getDuracao()).isEqualTo(30);
     }
 
     @Test
     void abrirSessao_semDuracaoInformada_ePautaValida_deveCriarSessaoAbertaComDuracaoPadraoDeUmMinuto() {
         Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
         pauta.setId(1L);
-        SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, 0);
+
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
+        request.setPautaId(1L);
+        request.setDuracao(0);
 
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
-        when(sessaoVotacaoRepository.save(sessaoVotacao)).thenReturn(sessaoVotacao);
+        when(sessaoVotacaoRepository.existsByPautaIdAndDataFimAfter(eq(1L), any(LocalDateTime.class)))
+                .thenReturn(false);
+        when(sessaoVotacaoRepository.save(any(SessaoVotacao.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        SessaoVotacao sessaoVotacaoSalva = sessaoVotacaoService.criar(sessaoVotacao);
+        SessaoVotacao sessaoSalva = sessaoVotacaoService.criar(request);
 
-        verify(sessaoVotacaoRepository).save(sessaoVotacao);
-        assertThat(sessaoVotacaoSalva).isNotNull();
-        assertThat(sessaoVotacaoSalva.getPauta().getTitulo()).isEqualTo("Pauta 1");
-        assertThat(sessaoVotacaoSalva.isSessaoAberta()).isTrue();
-        assertThat(sessaoVotacaoSalva.getDuracao()).isEqualTo(1);
-    }
-
-    @Test
-    void abrirSessao_comPautaNula_deveLancarExcecao() {
-        Pauta pauta = null;
-        SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, 0);
-
-        SessaoVotacaoInvaalidaException sessaoVotacaoInvaalidaException =
-                assertThrows(SessaoVotacaoInvaalidaException.class,
-                        () -> sessaoVotacaoService.criar(sessaoVotacao));
-        assertEquals("A Pauta é obrigatória para abrir uma sessão", sessaoVotacaoInvaalidaException.getMessage());
+        verify(sessaoVotacaoRepository).save(any(SessaoVotacao.class));
+        assertThat(sessaoSalva.getDuracao()).isEqualTo(1); // padrão
+        assertThat(sessaoSalva.isSessaoAberta()).isTrue();
     }
 
     @Test
     void abrirSessao_comPautaInexistente_deveLancarExcecao() {
-        Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
-        pauta.setId(1L);
-        SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, 0);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
+        request.setPautaId(1L);
+        request.setDuracao(10);
 
         when(pautaRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        SessaoVotacaoInvaalidaException sessaoVotacaoInvaalidaException =
+        SessaoVotacaoInvaalidaException exception =
                 assertThrows(SessaoVotacaoInvaalidaException.class,
-                        () -> sessaoVotacaoService.criar(sessaoVotacao));
-        assertEquals("A sessão de votação não pode ser criada para uma pauta inexistente", sessaoVotacaoInvaalidaException.getMessage());
+                        () -> sessaoVotacaoService.criar(request));
+
+        assertEquals("A sessão de votação não pode ser criada para uma pauta inexistente",
+                exception.getMessage());
     }
 
     @Test
@@ -101,18 +103,20 @@ class SessaoVotacaoUnitTest {
         Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
         pauta.setId(1L);
 
-        SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, 1);
-        SessaoVotacao sessaoVotacaoEmPautaComSessaoAtiva = new SessaoVotacao(pauta, 3);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
+        request.setPautaId(1L);
+        request.setDuracao(10);
 
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
-        when(sessaoVotacaoRepository.findByPautaIdAndDataFimAfter(
-                eq(pauta.getId()), any(LocalDateTime.class)))
-                .thenReturn(List.of(sessaoVotacao));
+        when(sessaoVotacaoRepository.existsByPautaIdAndDataFimAfter(eq(1L), any(LocalDateTime.class)))
+                .thenReturn(true);
 
-        SessaoVotacaoInvaalidaException sessaoVotacaoInvaalidaException =
+        SessaoVotacaoInvaalidaException exception =
                 assertThrows(SessaoVotacaoInvaalidaException.class,
-                        () -> sessaoVotacaoService.criar(sessaoVotacaoEmPautaComSessaoAtiva));
-        assertEquals("Não é possível criar uma sessão de votação em pauta com sessão já ativa", sessaoVotacaoInvaalidaException.getMessage());
+                        () -> sessaoVotacaoService.criar(request));
+
+        assertEquals("Não é possível criar uma sessão de votação em pauta com sessão já ativa",
+                exception.getMessage());
     }
 
     @Test
@@ -120,21 +124,22 @@ class SessaoVotacaoUnitTest {
         Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
         pauta.setId(1L);
 
-        SessaoVotacao sessaoVotacaoEncerrada = new SessaoVotacao(pauta, 5);
-        sessaoVotacaoEncerrada.setDataInicio(LocalDateTime.now().minusMinutes(10));
-        sessaoVotacaoEncerrada.setDataFim(LocalDateTime.now().minusMinutes(5));
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
+        request.setPautaId(1L);
+        request.setDuracao(3);
 
-        SessaoVotacao novaSessaoVotacao = new SessaoVotacao(pauta, 3);
+        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
+        when(sessaoVotacaoRepository.existsByPautaIdAndDataFimAfter(eq(1L), any(LocalDateTime.class)))
+                .thenReturn(false);
+        when(sessaoVotacaoRepository.save(any(SessaoVotacao.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
-        when(sessaoVotacaoRepository.save(novaSessaoVotacao)).thenReturn(novaSessaoVotacao);
+        SessaoVotacao sessaoSalva = sessaoVotacaoService.criar(request);
 
-        SessaoVotacao sessaoVotacaoSalva = sessaoVotacaoService.criar(novaSessaoVotacao);
-
-        verify(sessaoVotacaoRepository).save(sessaoVotacaoSalva);
-        assertThat(sessaoVotacaoSalva).isNotNull();
-        assertThat(sessaoVotacaoSalva.getPauta().getTitulo()).isEqualTo("Pauta 1");
-        assertThat(sessaoVotacaoSalva.isSessaoAberta()).isTrue();
-        assertThat(sessaoVotacaoSalva.getDuracao()).isEqualTo(3);
+        verify(sessaoVotacaoRepository).save(any(SessaoVotacao.class));
+        assertThat(sessaoSalva).isNotNull();
+        assertThat(sessaoSalva.getPauta().getTitulo()).isEqualTo("Pauta 1");
+        assertThat(sessaoSalva.isSessaoAberta()).isTrue();
+        assertThat(sessaoSalva.getDuracao()).isEqualTo(3);
     }
 }
