@@ -8,23 +8,20 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-//Garantindo um unico registro por sessao + cpf
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"sessao_id", "cpf"})
-})
-public class Voto
-{
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"sessao_id", "cpf"})
+)
+public class Voto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Muitos votos podem pertencer a uma sessão
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "sessao_id", nullable = false)
     private SessaoVotacao sessaoVotacao;
 

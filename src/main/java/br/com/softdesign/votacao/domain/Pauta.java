@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,15 +22,16 @@ public class Pauta {
     private Long id;
 
     private String titulo;
-
     private String descricao;
-
     private LocalDateTime dataCriacao;
 
-    // Uma pauta pode ter várias sessões de votação
     @OneToMany(mappedBy = "pauta", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SessaoVotacao> sessoes = new ArrayList<>();
+    private Set<SessaoVotacao> sessoes = new HashSet<>();
 
+    public void adicionarSessao(SessaoVotacao sessao) {
+        sessoes.add(sessao);
+        sessao.setPauta(this);
+    }
     public Pauta(String titulo, String descricao) {
         this.titulo = titulo;
         this.descricao = descricao;

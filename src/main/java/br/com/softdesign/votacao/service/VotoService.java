@@ -7,6 +7,7 @@ import br.com.softdesign.votacao.exception.SessaoVotacaoInvaalidaException;
 import br.com.softdesign.votacao.exception.VotoInvalidoException;
 import br.com.softdesign.votacao.repository.SessaoVotacaoRepository;
 import br.com.softdesign.votacao.repository.VotoRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +21,15 @@ public class VotoService {
 
     private final SessaoVotacaoRepository sessaoVotacaoRepository;
 
+    @Transactional
     public Voto registrarVoto(CriarVotoRequest votoRequest) {
         SessaoVotacao sessaoVotacao = buscarSessaoOuLancar(votoRequest.getSessaoVotacaoId());
         validarSessaoAberta(sessaoVotacao);
         validarVotoDuplicado(sessaoVotacao, votoRequest.getCpf());
 
         Voto voto = new Voto(sessaoVotacao, votoRequest.getCpf(), votoRequest.getVoto());
+        sessaoVotacao.adicionarVoto(voto);
+
         return votoRepository.save(voto);
     }
 

@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -21,8 +20,7 @@ public class SessaoVotacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Muitas sessões podem pertencer a uma pauta
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "pauta_id", nullable = false)
     private Pauta pauta;
 
@@ -30,17 +28,26 @@ public class SessaoVotacao {
     private LocalDateTime dataFim;
     private int duracao;
 
-    // Uma sessão pode ter vários votos
-    @OneToMany(mappedBy = "sessaoVotacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "sessaoVotacao",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Voto> votos = new ArrayList<>();
 
     public SessaoVotacao(Pauta pauta, int duracao){
         this.pauta = pauta;
         this.duracao = duracao > 0 ? duracao : 1;
+        this.dataInicio = LocalDateTime.now();
+        this.dataFim = this.dataInicio.plusMinutes(this.duracao);
     }
 
     public boolean isSessaoAberta() {
-        return LocalDateTime.now().isBefore(dataFim);
+        return dataFim != null && LocalDateTime.now().isBefore(dataFim);
     }
 
+    public void adicionarVoto(Voto voto) {
+        votos.add(voto);
+        voto.setSessaoVotacao(this);
+    }
 }
