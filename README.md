@@ -103,6 +103,12 @@ O projeto conta com:
 
 Os testes garantem maior confiabilidade e facilitam futuras evoluções.
 
+### Executar todos os testes
+
+```bash
+mvn test
+```
+
 
 ## 🧠 Decisões de Projeto
 
@@ -112,15 +118,6 @@ Os testes garantem maior confiabilidade e facilitam futuras evoluções.
 - Persistência local visando facilitar a execução do avaliador  
 - Foco na comunicação clara via JSON com o cliente mobile
 
-## 🧪 Testes
-
-O projeto conta com **testes unitários e testes de integração**, cobrindo as principais regras de negócio da aplicação.
-
-### Executar todos os testes
-
-```bash
-mvn test
-```
 
 ## ▶️ Como Executar o Projeto
 
@@ -141,13 +138,11 @@ A aplicação estará disponível em:
 http://localhost:8080
 ```
 
-
 ## 📝 Observações
 
 - A segurança da API foi abstraída, conforme solicitado no desafio  
 - A aplicação cliente (mobile) não faz parte deste projeto  
 - Dependências externas foram minimizadas para facilitar a execução  
----
 
 ## 👩‍💻 Autora
 
