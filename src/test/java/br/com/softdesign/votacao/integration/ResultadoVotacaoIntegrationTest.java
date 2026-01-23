@@ -4,29 +4,28 @@ import br.com.softdesign.votacao.domain.*;
 import br.com.softdesign.votacao.dto.ResultadoVotacaoResponse;
 import br.com.softdesign.votacao.repository.PautaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 class ResultadoVotacaoIntegrationTest {
 
-    @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private PautaRepository pautaRepository;
@@ -40,14 +39,17 @@ class ResultadoVotacaoIntegrationTest {
 
     @BeforeEach
     void setup() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+
         pautaRepository.deleteAll();
 
         pauta = new Pauta("Pauta 1", "Descrição");
         sessao = new SessaoVotacao(pauta, 3);
-
         pauta.adicionarSessao(sessao);
-
         pautaRepository.save(pauta);
+
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Test
@@ -111,7 +113,6 @@ class ResultadoVotacaoIntegrationTest {
         assertThat(r.getTotalNao()).isZero();
     }
 
-
     @Test
     void calcularResultado_quandoNaoExistiremSessoes_deveRetornarSemVotos() throws Exception {
         Pauta p = new Pauta("Pauta sem sessão", "desc");
@@ -142,7 +143,8 @@ class ResultadoVotacaoIntegrationTest {
     }
 
     private ResultadoVotacaoResponse chamarEndpoint() throws Exception {
-        String json = mockMvc.perform(get("/resultados/{id}", pauta.getId()))
+        String json = mockMvc.perform(get("/resultados/{id}", pauta.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 

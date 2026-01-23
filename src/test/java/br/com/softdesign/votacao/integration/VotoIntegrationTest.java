@@ -7,28 +7,32 @@ import br.com.softdesign.votacao.dto.CriarVotoRequest;
 import br.com.softdesign.votacao.repository.PautaRepository;
 import br.com.softdesign.votacao.repository.SessaoVotacaoRepository;
 import br.com.softdesign.votacao.repository.VotoRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
 class VotoIntegrationTest {
 
-    @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private PautaRepository pautaRepository;
@@ -38,15 +42,17 @@ class VotoIntegrationTest {
 
     @Autowired
     private VotoRepository votoRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private Pauta pauta;
     private SessaoVotacao sessaoVotacao;
 
     @BeforeEach
     void setup() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+
         votoRepository.deleteAll();
         sessaoVotacaoRepository.deleteAll();
         pautaRepository.deleteAll();
@@ -72,19 +78,13 @@ class VotoIntegrationTest {
 
     @Test
     void registrarVoto_quandoMesmoAssociadoVotaNaMesmaPauta_deveRetornar400() throws Exception {
-        CriarVotoRequest request = new CriarVotoRequest(
-                sessaoVotacao.getId(),
-                "12345678901",
-                VotoOpcao.SIM
-        );
+        CriarVotoRequest request = new CriarVotoRequest(sessaoVotacao.getId(), "12345678901", VotoOpcao.SIM);
 
-        // Primeiro voto válido
         mockMvc.perform(post("/votos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        // Segundo voto duplicado — espera 400
         mockMvc.perform(post("/votos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -94,7 +94,7 @@ class VotoIntegrationTest {
 
     @Test
     void registrarVoto_quandoSessaoNaoExistir_deveRetornar400() throws Exception {
-        CriarVotoRequest request = new CriarVotoRequest(999L, "12345678901", br.com.softdesign.votacao.domain.VotoOpcao.SIM);
+        CriarVotoRequest request = new CriarVotoRequest(999L, "12345678901", VotoOpcao.SIM);
 
         mockMvc.perform(post("/votos")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -105,11 +105,10 @@ class VotoIntegrationTest {
 
     @Test
     void registrarVoto_quandoSessaoFechada_deveRetornar400() throws Exception {
-        // fecha a sessão
         sessaoVotacao.setDataFim(LocalDateTime.now().minusMinutes(1));
         sessaoVotacaoRepository.save(sessaoVotacao);
 
-        CriarVotoRequest request = new CriarVotoRequest(sessaoVotacao.getId(), "12345678901", br.com.softdesign.votacao.domain.VotoOpcao.SIM);
+        CriarVotoRequest request = new CriarVotoRequest(sessaoVotacao.getId(), "12345678901", VotoOpcao.SIM);
 
         mockMvc.perform(post("/votos")
                         .contentType(MediaType.APPLICATION_JSON)
