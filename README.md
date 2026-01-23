@@ -218,6 +218,33 @@ A aplicação estará disponível em:
 http://localhost:8080
 ```
 
+# Tarefas Futuras / Bônus
+
+Aqui vou explicar como eu faria as tarefas bônus, caso fosse implementar:
+
+=
+
+## Tarefa Bônus 1 - Integração com sistemas externos
+
+Para essa tarefa, eu chamaria o serviço externo passando o CPF do associado e veria se ele pode votar ou não.  
+Se o CPF for inválido, a API retorna 404, e se for válido, retorna `ABLE_TO_VOTE` ou `UNABLE_TO_VOTE`.  
+Antes de registrar o voto, eu checaria isso. Para testar, daria pra usar CPFs gerados e até fazer mock do serviço.
+
+## Tarefa Bônus 2 - Performance
+
+Eu tentaria garantir que a API aguentasse muitos votos sem travar.  
+Algumas ideias que eu teria:
+- Usar gravação em lote ou otimizar o banco
+- Indexar colunas importantes para a contagem de votos
+- Fazer testes de carga com ferramentas tipo JMeter ou Gatling
+Assim consigo ver se a aplicação continua rápida mesmo com muito voto.
+
+## Tarefa Bônus 3 - Versionamento da API
+
+Eu faria versionamento da API usando a URL, tipo `/api/v1/...` e `/api/v2/...` quando precisar mudar algo que quebre compatibilidade.  
+Também daria para fazer por header, mas o mais simples é pela URL mesmo.  
+A ideia é conseguir evoluir a API sem quebrar quem já está usando.
+
 ## 📝 Observações
 
 - A segurança da API foi abstraída, conforme solicitado no desafio  
