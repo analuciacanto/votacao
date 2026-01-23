@@ -66,17 +66,97 @@ br.com.softdesign.votacao
 POST /pautas
 ```
 
+**Body de exemplo:**
+
+```json
+{
+  "titulo": "Implantação de novo sistema de votação",
+  "descricao": "Discussão sobre a implantação do novo sistema eletrônico para as assembleias."
+}
+```
+
+**Resposta esperada:**
+
+```json
+
+{
+  "id": 1,
+  "titulo": "Implantação de novo sistema de votação",
+  "descricao": "Discussão sobre a implantação do novo sistema eletrônico para as assembleias.",
+  "dataCriacao": "2026-01-23T12:00:00"
+}
+```
+
 ### Abrir sessão de votação
 
 ```shell
 POST /sessaoVotacao
 ```
 
-### Obter resultado da votação
-```shell
-GET /pautas/{id}/resultado
+**Body de exemplo:**
+
+```json
+{
+  "pautaId": 150,
+  "duracao": 5
+}
 ```
 
+**Resposta esperada:**
+
+```json
+{
+	"id": 88,
+	"pautaId": 150,
+	"dataInicio": "2026-01-23T15:05:13.73530204",
+	"dataFim": "2026-01-23T15:15:13.73530204",
+	"duracao": 10,
+	"sessaoAberta": true
+}    
+```
+
+
+### Votar na sessão
+```shell
+POST /votos
+```
+
+**Body de exemplo:**
+
+```json
+{
+  "sessaoVotacaoId": 88,
+  "cpf": "02345688901",
+  "voto": "NAO"
+}
+
+```
+
+**Resposta esperada:**
+
+```json
+{
+	"cpf": "02345688901",
+	"voto": "NAO"
+}
+```
+
+### Obter resultado da votação
+```shell
+GET /resultado/{ID}
+```
+
+**Resposta esperada:**
+
+```json
+{
+	"pautaId": 150,
+	"tituloPauta": "Implantação de novo sistema de votação",
+	"totalSim": 1,
+	"totalNao": 1,
+	"resultado": "EMPATE"
+} 
+```
 
 > 📌 O versionamento da API não foi implementado nesta versão.  
 > Como evolução futura, está prevista a adoção de versionamento via URL (`/api/v1`), permitindo manutenção e evolução controlada da API.
