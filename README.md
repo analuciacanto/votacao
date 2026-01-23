@@ -220,9 +220,16 @@ http://localhost:8080
 
 # Tarefas Futuras / Bônus
 
-Aqui vou explicar como eu faria as tarefas bônus, caso fosse implementar:
+## Melhorias futuras / Outros cenários
 
-=
+Além das tarefas bônus, eu também faria melhorias no código para cobrir **cenários que ainda não estão totalmente tratados**, por exemplo:  
+
+- Funcionamento com **várias sessões de votação abertas ao mesmo tempo**  
+- Evitar problemas com **associados duplicados** ou votos repetidos  
+- Tratar **tempos de sessão diferentes** e possíveis inconsistências de contagem  
+- Garantir que a API continue funcionando mesmo com **cenários inesperados**  
+
+Essas melhorias ajudariam a tornar a aplicação mais **robusta e confiável**, preparada para situações reais que podem acontecer em uma assembleia com muitos associados.
 
 ## Tarefa Bônus 1 - Integração com sistemas externos
 
