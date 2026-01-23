@@ -69,7 +69,7 @@ POST /pautas
 ### Abrir sessão de votação
 
 ```shell
-POST /sessoes```
+POST /sessaoVotacao
 ```
 
 ### Obter resultado da votação
