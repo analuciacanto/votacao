@@ -27,6 +27,7 @@ public class Pauta {
 
     private LocalDateTime dataCriacao;
 
+    // Uma pauta pode ter várias sessões de votação
     @OneToMany(mappedBy = "pauta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SessaoVotacao> sessoes = new ArrayList<>();
 

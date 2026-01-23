@@ -35,7 +35,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleSessaoVotacaoInvalida(SessaoVotacaoInvaalidaException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put("status", 400);
-        response.put("mensagem", ex.getMessage()); // singular
+        response.put("mensagem", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(VotoInvalidoException.class)
+    public ResponseEntity<Map<String, Object>> handleVotoInvalido(VotoInvalidoException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", 400);
+        response.put("mensagem", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

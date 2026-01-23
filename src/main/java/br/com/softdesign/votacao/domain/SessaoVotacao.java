@@ -21,16 +21,17 @@ public class SessaoVotacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "pauta_id", nullable = false, unique = true)
+    // Muitas sessões podem pertencer a uma pauta
+    @ManyToOne
+    @JoinColumn(name = "pauta_id", nullable = false)
     private Pauta pauta;
 
     private LocalDateTime dataInicio;
     private LocalDateTime dataFim;
     private int duracao;
 
-    // Relacionamento com votos
-    @OneToMany(mappedBy = "sessao", cascade = CascadeType.ALL, orphanRemoval = true)
+    // Uma sessão pode ter vários votos
+    @OneToMany(mappedBy = "sessaoVotacao", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Voto> votos = new ArrayList<>();
 
     public SessaoVotacao(Pauta pauta, int duracao){
