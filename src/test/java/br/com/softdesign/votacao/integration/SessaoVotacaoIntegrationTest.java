@@ -62,7 +62,7 @@ class SessaoVotacaoIntegrationTest {
         request.setPautaId(pauta.getId());
         request.setDuracao(15);
 
-        mockMvc.perform(post("/sessaoVotacao")
+        mockMvc.perform(post("/sessao-votacao")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -76,7 +76,7 @@ class SessaoVotacaoIntegrationTest {
         request.setPautaId(pauta.getId());
         request.setDuracao(0);
 
-        mockMvc.perform(post("/sessaoVotacao")
+        mockMvc.perform(post("/sessao-votacao")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -89,7 +89,7 @@ class SessaoVotacaoIntegrationTest {
         request.setPautaId(999L);
         request.setDuracao(10);
 
-        mockMvc.perform(post("/sessaoVotacao")
+        mockMvc.perform(post("/sessao-votacao")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -111,7 +111,7 @@ class SessaoVotacaoIntegrationTest {
         request.setPautaId(pauta.getId());
         request.setDuracao(5);
 
-        mockMvc.perform(post("/sessaoVotacao")
+        mockMvc.perform(post("/sessao-votacao")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
