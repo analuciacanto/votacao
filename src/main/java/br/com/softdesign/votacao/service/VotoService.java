@@ -7,6 +7,7 @@ import br.com.softdesign.votacao.exception.SessaoVotacaoInvaalidaException;
 import br.com.softdesign.votacao.exception.VotoInvalidoException;
 import br.com.softdesign.votacao.repository.SessaoVotacaoRepository;
 import br.com.softdesign.votacao.repository.VotoRepository;
+import io.micrometer.core.annotation.Timed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class VotoService {
     private final SessaoVotacaoRepository sessaoVotacaoRepository;
     private static final Logger log = LoggerFactory.getLogger(VotoService.class);
 
+    @Timed(value = "voto.registrar.tempo", description = "Tempo gasto para registrar um voto")
     @Transactional
     public Voto registrarVoto(CriarVotoRequest votoRequest) {
 

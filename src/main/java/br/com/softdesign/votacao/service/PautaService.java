@@ -5,6 +5,7 @@ import br.com.softdesign.votacao.dto.CriarPautaRequest;
 import br.com.softdesign.votacao.dto.PautaResponse;
 import br.com.softdesign.votacao.exception.PautaInvalidaException;
 import br.com.softdesign.votacao.repository.PautaRepository;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ public class PautaService {
    private final PautaRepository pautaRepository;
    private static final Logger log = LoggerFactory.getLogger(PautaService.class);
 
+    @Timed(value = "pautas.criar.tempo", description = "Tempo gasto para criar uma pauta")
     public Pauta criar(CriarPautaRequest pautaRequest) {
 
         log.info("Iniciando criação de pauta");
@@ -42,6 +44,7 @@ public class PautaService {
         return pautaSalva;
     }
 
+    @Timed(value = "pautas.listar.tempo", description = "Tempo gasto para listar todas as pautas")
     public List<PautaResponse> getAllPautas() {
         log.info("Buscando todas as pautas cadastradas");
 

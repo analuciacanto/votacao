@@ -6,6 +6,7 @@ import br.com.softdesign.votacao.dto.CriarSessaoVotacaoRequest;
 import br.com.softdesign.votacao.exception.SessaoVotacaoInvaalidaException;
 import br.com.softdesign.votacao.repository.PautaRepository;
 import br.com.softdesign.votacao.repository.SessaoVotacaoRepository;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class SessaoVotacaoService {
     private final PautaRepository pautaRepository;
     private static final Logger log = LoggerFactory.getLogger(SessaoVotacaoService.class);
 
+    @Timed(value = "sessaoVotacao.criar.tempo", description = "Tempo gasto para criar uma sessão de votação")
     public SessaoVotacao criar(CriarSessaoVotacaoRequest request) {
 
         log.info("Iniciando criação de sessão de votação | pautaId={} | duracaoRecebida={}",

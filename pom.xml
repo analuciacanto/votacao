@@ -75,18 +75,19 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Spring Boot Actuator -->
+		<!-- Actuator + Micrometer -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-
-		<!-- Micrometer + Prometheus -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-micrometer-metrics</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>

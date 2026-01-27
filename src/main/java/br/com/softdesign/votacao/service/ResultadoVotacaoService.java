@@ -6,6 +6,7 @@ import br.com.softdesign.votacao.domain.VotoOpcao;
 import br.com.softdesign.votacao.dto.ResultadoVotacaoResponse;
 import br.com.softdesign.votacao.exception.PautaInvalidaException;
 import br.com.softdesign.votacao.repository.PautaRepository;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class ResultadoVotacaoService {
     private final PautaRepository pautaRepository;
     private static final Logger log = LoggerFactory.getLogger(ResultadoVotacaoService.class);
 
+    @Timed(value = "resultadoVotacao.contarVotos.tempo", description = "Tempo gasto para apuração de votos")
     public ResultadoVotacaoResponse contarVotos(Long pautaId) {
         log.info("Iniciando apuração de votos | pautaId={}", pautaId);
 
