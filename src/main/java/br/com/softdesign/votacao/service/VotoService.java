@@ -29,14 +29,14 @@ public class VotoService {
     public Voto registrarVoto(CriarVotoRequest votoRequest) {
 
         log.info("Recebida solicitação de voto | sessaoId={} | cpf={}",
-                votoRequest.getSessaoVotacaoId(),
-                votoRequest.getCpf());
+                votoRequest.sessaoVotacaoId(),
+                votoRequest.cpf());
 
-        SessaoVotacao sessaoVotacao = buscarSessaoOuLancar(votoRequest.getSessaoVotacaoId());
+        SessaoVotacao sessaoVotacao = buscarSessaoOuLancar(votoRequest.sessaoVotacaoId());
         validarSessaoAberta(sessaoVotacao);
-        validarVotoDuplicado(sessaoVotacao, votoRequest.getCpf());
+        validarVotoDuplicado(sessaoVotacao, votoRequest.cpf());
 
-        Voto voto = new Voto(sessaoVotacao, votoRequest.getCpf(), votoRequest.getVoto());
+        Voto voto = new Voto(sessaoVotacao, votoRequest.cpf(), votoRequest.voto());
         sessaoVotacao.adicionarVoto(voto);
 
         Voto votoSalvo = votoRepository.save(voto);

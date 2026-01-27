@@ -31,7 +31,7 @@ public class VotoController {
     public ResponseEntity<VotoResponse> create(@RequestBody @Valid CriarVotoRequest votoRequest){
 
         log.info("POST /votos | Registrar voto | sessaoId={}",
-                votoRequest.getSessaoVotacaoId());
+                votoRequest.sessaoVotacaoId());
 
         Voto voto = votoService.registrarVoto(votoRequest);
 
