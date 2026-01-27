@@ -15,7 +15,9 @@ O sistema foi desenvolvido como parte de um **desafio técnico**, com foco em **
   - Cada associado pode votar apenas uma vez por pauta  
 - 📊 Apuração e resultado da votação  
 - 💾 Persistência de dados (não são perdidos após restart)
-
+- - 📈 Observabilidade
+- Logs estruturados (`INFO`, `WARN`, `ERROR`)
+- Métricas de erros e tempo de execução de métodos via Actuator + Micrometer
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -29,7 +31,8 @@ O sistema foi desenvolvido como parte de um **desafio técnico**, com foco em **
 - Banco de dados H2 (em memória)  
 - Maven  
 - JUnit 5 e Mockito
-
+- Spring Boot Actuator
+- Micrometer
   
 ## 🧱 Arquitetura e Organização
 
