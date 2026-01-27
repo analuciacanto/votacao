@@ -205,6 +205,45 @@ Níveis utilizados:
 - `INFO` → operações bem-sucedidas
 - `WARN` → violações de regras de negócio
 - `ERROR` → falhas inesperadas do sistema
+- 
+### 📊 Métricas
+A aplicação possui métricas implementadas usando **Spring Boot Actuator + Micrometer**.  
+O monitoramento é feito principalmente via um **Aspect** que intercepta todos os métodos dos serviços, permitindo:
+
+1. **Contadores de erros por tipo de exceção**  
+   Cada vez que um método de serviço lança uma exceção, o contador correspondente é incrementado.  
+   Exemplos de métricas geradas:
+
+  - `service.erros.SessaoVotacaoInvalidaException` → contagem de sessões inválidas
+  - `service.erros.VotoInvalidoException` → contagem de votos inválidos
+
+2. **Métricas por método**  
+   O Aspect permite facilmente medir o tempo de execução de qualquer método do serviço.  
+   Exemplo de métrica de tempo exposta via Actuator:
+
+```bash
+GET http://localhost:8080/actuator/metrics/pautas.criar.tempo
+```
+
+Outras métricas podem ser adicionadas de forma similar, como contagem de chamadas ou timers por método, bastando registrar com `MeterRegistry`.
+
+Endpoints disponíveis:
+
+- `/actuator/metrics` → métricas detalhadas de toda a aplicação
+- `/actuator/health` → status da aplicação e do banco de dados
+
+Essas métricas permitem monitorar tanto **a saúde da aplicação** quanto **a performance e confiabilidade das operações críticas**, oferecendo visão completa para ambientes de produção.
+
+
+### 🔍 Consultando métricas
+
+Você pode consultar as métricas diretamente via `curl` ou no navegador:
+
+```bash
+curl http://localhost:8080/actuator/metrics
+curl http://localhost:8080/actuator/metrics/pautas.criar.tempo
+curl http://localhost:8080/actuator/health
+```
 
 ## 🧠 Decisões de Projeto
 
