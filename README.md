@@ -90,7 +90,7 @@ POST /pautas
 ### Abrir sessão de votação
 
 ```shell
-POST /sessaoVotacao
+POST /sessao-votacao
 ```
 
 **Body de exemplo:**
