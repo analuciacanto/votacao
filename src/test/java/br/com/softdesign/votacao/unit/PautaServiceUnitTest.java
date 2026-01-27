@@ -68,7 +68,7 @@ public class PautaServiceUnitTest {
     @Test
     void getAllPautas_deveRetornarLista() {
 
-        Pauta pauta = new Pauta("Pauta", "Desc");
+        Pauta pauta = new Pauta("Pauta",    "Desc");
         pauta.setId(1L);
         when(pautaRepository.findAll()).thenReturn(List.of(pauta));
 
@@ -77,9 +77,9 @@ public class PautaServiceUnitTest {
         assertThat(pautasResponse).hasSize(1);
 
         PautaResponse primeira = pautasResponse.get(0);
-        assertThat(primeira.getId()).isEqualTo(1L);
-        assertThat(primeira.getTitulo()).isEqualTo("Pauta");
-        assertThat(primeira.getDescricao()).isEqualTo("Desc");
+        assertThat(primeira.id()).isEqualTo(1L);
+        assertThat(primeira.titulo()).isEqualTo("Pauta");
+        assertThat(primeira.descricao()).isEqualTo("Desc");
 
         verify(pautaRepository).findAll();
     }

@@ -31,10 +31,10 @@ public class PautaService {
         }
 
         log.debug("Dados recebidos para criação da pauta | titulo={} | descricao={}",
-                pautaRequest.getTitulo(),
-                pautaRequest.getDescricao());
+                pautaRequest.titulo(),
+                pautaRequest.descricao());
 
-        Pauta pauta = new Pauta(pautaRequest.getTitulo(), pautaRequest.getDescricao());
+        Pauta pauta = new Pauta(pautaRequest.titulo(), pautaRequest.descricao());
         Pauta pautaSalva = pautaRepository.save(pauta);
 
         log.info("Pauta criada com sucesso | pautaId={} | titulo={}",

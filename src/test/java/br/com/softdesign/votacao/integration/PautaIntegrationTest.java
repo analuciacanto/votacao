@@ -5,11 +5,15 @@ import br.com.softdesign.votacao.repository.PautaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import org.springframework.http.MediaType;
+
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -18,7 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 class PautaIntegrationTest {
 
     private MockMvc mockMvc;
@@ -62,8 +67,7 @@ class PautaIntegrationTest {
 
     @Test
     void criarPauta_semTitulo_deveRetornar400() throws Exception {
-        CriarPautaRequest request = new CriarPautaRequest();
-        request.setDescricao("Descrição da pauta");
+        CriarPautaRequest request = new CriarPautaRequest(null, "Descrição da pauta");
 
         mockMvc.perform(post("/pautas")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -104,6 +108,7 @@ class PautaIntegrationTest {
                 .andExpect(status().isUnsupportedMediaType());
     }
 
+
     @Test
     void criarPauta_comDescricaoNula_deveRetornar201() throws Exception {
         CriarPautaRequest request = new CriarPautaRequest("Pauta sem descrição", null);
@@ -139,5 +144,7 @@ class PautaIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
+
     }
+
 }

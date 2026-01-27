@@ -26,7 +26,7 @@ public class PautaController {
     public ResponseEntity<PautaResponse> create(@RequestBody @Valid CriarPautaRequest pautaRequest){
 
         log.info("POST /pautas | Criar pauta | titulo={}",
-                pautaRequest.getTitulo());
+                pautaRequest.titulo());
 
         Pauta pautaCriada = pautaService.criar(pautaRequest);
 
