@@ -11,5 +11,4 @@ class VotacaoApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

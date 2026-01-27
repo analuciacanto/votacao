@@ -58,9 +58,7 @@ class SessaoVotacaoIntegrationTest {
 
     @Test
     void criarSessao_comDuracaoInformada_deveRetornar201() throws Exception {
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(pauta.getId());
-        request.setDuracao(15);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(pauta.getId(), 15);
 
         mockMvc.perform(post("/sessao-votacao")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -72,9 +70,8 @@ class SessaoVotacaoIntegrationTest {
 
     @Test
     void criarSessao_semDuracaoInformada_deveUsarDuracaoPadrao() throws Exception {
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(pauta.getId());
-        request.setDuracao(0);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(pauta.getId(),0);
+
 
         mockMvc.perform(post("/sessao-votacao")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -85,9 +82,8 @@ class SessaoVotacaoIntegrationTest {
 
     @Test
     void criarSessao_comPautaInexistente_deveRetornar400_eMensagemCorreta() throws Exception {
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(999L);
-        request.setDuracao(10);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(999L,10);
+
 
         mockMvc.perform(post("/sessao-votacao")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -107,9 +103,7 @@ class SessaoVotacaoIntegrationTest {
         sessaoAtiva.setDataFim(LocalDateTime.now().plusMinutes(10));
         sessaoVotacaoRepository.save(sessaoAtiva);
 
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(pauta.getId());
-        request.setDuracao(5);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(pauta.getId(),5);
 
         mockMvc.perform(post("/sessao-votacao")
                         .contentType(MediaType.APPLICATION_JSON)

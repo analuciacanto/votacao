@@ -28,8 +28,8 @@ public class SessaoVotacaoController {
     public ResponseEntity<SessaoVotacaoResponse> create(@RequestBody @Valid CriarSessaoVotacaoRequest sessaoVotacao){
 
         log.info("POST /sessao-votacao | Criar sessão | pautaId={} | duracao={}",
-                sessaoVotacao.getPautaId(),
-                sessaoVotacao.getDuracao());
+                sessaoVotacao.pautaId(),
+                sessaoVotacao.duracao());
 
         SessaoVotacao sessaoVotacaoCriada = sessaoVotacaoService.criar(sessaoVotacao);
 
@@ -38,7 +38,7 @@ public class SessaoVotacaoController {
                 sessaoVotacaoCriada.getPauta().getId(),
                 sessaoVotacaoCriada.isSessaoAberta());
 
-        SessaoVotacaoResponse sessaoVotacaoResponse = new SessaoVotacaoResponse(sessaoVotacaoCriada.getId(), sessaoVotacao.getPautaId(),
+        SessaoVotacaoResponse sessaoVotacaoResponse = new SessaoVotacaoResponse(sessaoVotacaoCriada.getId(), sessaoVotacao.pautaId(),
               sessaoVotacaoCriada.getDataInicio(), sessaoVotacaoCriada.getDataFim(), sessaoVotacaoCriada.isSessaoAberta(), sessaoVotacaoCriada.getDuracao());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(sessaoVotacaoResponse);

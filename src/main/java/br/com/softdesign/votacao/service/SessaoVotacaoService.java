@@ -25,10 +25,10 @@ public class SessaoVotacaoService {
     public SessaoVotacao criar(CriarSessaoVotacaoRequest request) {
 
         log.info("Iniciando criação de sessão de votação | pautaId={} | duracaoRecebida={}",
-                request.getPautaId(), request.getDuracao());
+                request.pautaId(), request.duracao());
 
         // Valida existência da pauta
-        Pauta pauta = validarPautaExiste(request.getPautaId());
+        Pauta pauta = validarPautaExiste(request.pautaId());
 
         // Valida se já existe sessão ativa
         validarSessaoAtiva(pauta);
@@ -36,7 +36,7 @@ public class SessaoVotacaoService {
         // Cria a sessão de votação
         SessaoVotacao sessaoVotacao = new SessaoVotacao();
         sessaoVotacao.setPauta(pauta);
-        setDuracao(sessaoVotacao, request.getDuracao());
+        setDuracao(sessaoVotacao, request.duracao());
 
         SessaoVotacao sessaoSalva =  sessaoVotacaoRepository.save(sessaoVotacao);
 

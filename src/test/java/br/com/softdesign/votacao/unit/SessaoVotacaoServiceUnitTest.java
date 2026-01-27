@@ -40,9 +40,7 @@ class SessaoVotacaoServiceUnitTest {
         Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
         pauta.setId(1L);
 
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(1L);
-        request.setDuracao(30);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(1L, 30);
 
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
         when(sessaoVotacaoRepository.existsByPautaIdAndDataFimAfter(eq(1L), any(LocalDateTime.class)))
@@ -64,9 +62,7 @@ class SessaoVotacaoServiceUnitTest {
         Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
         pauta.setId(1L);
 
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(1L);
-        request.setDuracao(0);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(1l,0);
 
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
         when(sessaoVotacaoRepository.existsByPautaIdAndDataFimAfter(eq(1L), any(LocalDateTime.class)))
@@ -83,9 +79,7 @@ class SessaoVotacaoServiceUnitTest {
 
     @Test
     void abrirSessao_comPautaInexistente_deveLancarExcecao() {
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(1L);
-        request.setDuracao(10);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(1L, 10);
 
         when(pautaRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -102,9 +96,7 @@ class SessaoVotacaoServiceUnitTest {
         Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
         pauta.setId(1L);
 
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(1L);
-        request.setDuracao(10);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(1L,10);
 
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
         when(sessaoVotacaoRepository.existsByPautaIdAndDataFimAfter(eq(1L), any(LocalDateTime.class)))
@@ -123,9 +115,7 @@ class SessaoVotacaoServiceUnitTest {
         Pauta pauta = new Pauta("Pauta 1", "Descricao 1");
         pauta.setId(1L);
 
-        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest();
-        request.setPautaId(1L);
-        request.setDuracao(3);
+        CriarSessaoVotacaoRequest request = new CriarSessaoVotacaoRequest(1L,3);
 
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
         when(sessaoVotacaoRepository.existsByPautaIdAndDataFimAfter(eq(1L), any(LocalDateTime.class)))
