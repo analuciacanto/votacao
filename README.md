@@ -189,6 +189,22 @@ Os testes garantem maior confiabilidade e facilitam futuras evoluções.
 mvn test
 ```
 
+## 📈 Logs e Métricas
+
+### 📝 Logs
+A aplicação utiliza **SLF4J + Logback** para registro de logs.  
+Os logs registram informações importantes sobre operações críticas, como:
+
+- Criação de pautas
+- Abertura de sessões de votação
+- Registro de votos
+- Regras de negócio violadas (ex.: voto duplicado, sessão fechada)
+
+Níveis utilizados:
+
+- `INFO` → operações bem-sucedidas
+- `WARN` → violações de regras de negócio
+- `ERROR` → falhas inesperadas do sistema
 
 ## 🧠 Decisões de Projeto
 
