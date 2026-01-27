@@ -28,6 +28,7 @@ O sistema foi desenvolvido como parte de um **desafio técnico**, com foco em **
   - Spring Validation  
 - Hibernate  
 - Lombok  
+- Records
 - Banco de dados H2 (em memória)  
 - Maven  
 - JUnit 5 e Mockito
