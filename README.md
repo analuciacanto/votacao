@@ -287,8 +287,10 @@ Além das tarefas bônus, eu também faria melhorias no código para cobrir **ce
 - Evitar problemas com **associados duplicados** ou votos repetidos  
 - Tratar **tempos de sessão diferentes** e possíveis inconsistências de contagem  
 - Garantir que a API continue funcionando mesmo com **cenários inesperados**  
+- Atualmente os logs registram eventos gerais de apuração e operações. Futuramente, pretende-se usar **Mapped Diagnostic Context (MDC)** para incluir informações de request ou usuário (ex.: `associadoId`, `sessaoId`) em todos os logs, facilitando **depuração** e **auditoria detalhada**.
 
 Essas melhorias ajudariam a tornar a aplicação mais **robusta e confiável**, preparada para situações reais que podem acontecer em uma assembleia com muitos associados.
+
 
 ## Tarefa Bônus 1 - Integração com sistemas externos
 
